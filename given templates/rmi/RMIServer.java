@@ -49,6 +49,15 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 	}
 
 	protected static void rebindServer(String serverURL, RMIServer server) {
+		
+		try {
+			Registry registry = LocateRegistry.getRegistry();
+			registry.rebind("RMIServer", RMIServer());
+		catch { RemoteException e) {
+			Registry registry = LocalRegistry.createRegistry();
+			registry.rebind("RMIServer", RMIServer());
+		}	
+			
 
 		// TO-DO:
 		// Start / find the registry (hint use LocateRegistry.createRegistry(...)
