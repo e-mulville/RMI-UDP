@@ -6,6 +6,7 @@ package rmi;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.RMISecurityManager;
 
 import common.MessageInfo;
 

@@ -37,8 +37,8 @@ public class UDPClient {
 		recvPort = Integer.parseInt(args[1]);
 		countTo = Integer.parseInt(args[2]);
 		
-		testLoop(serverAddr, recvPort, countTo);
-
+		UDPClient uclient = new UPDClient();
+		client.testLoop(serverAddr, recvPort, countTo);		
 		sendSoc.close();
 
 		

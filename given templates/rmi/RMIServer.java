@@ -9,6 +9,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
+import java.rmi.RMISecurityManager;
+import java.rmi.registry.Registry;
 
 import common.*;
 
@@ -51,13 +53,24 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 	protected static void rebindServer(String serverURL, RMIServer server) {
 		
 		try {
+			RMIServerI server1 = new RMIServer();
+			RMIServerI stub = (RMIServer) UnicastRemoteObject.exportObject(server1, 0);
 			Registry registry = LocateRegistry.getRegistry();
-			registry.rebind("RMIServer", RMIServer());
-		catch { RemoteException e) {
-			Registry registry = LocalRegistry.createRegistry();
-			registry.rebind("RMIServer", RMIServer());
-		}	
-			
+			registry.rebind("RMIServer", stub);
+		}
+		catch ( RemoteException e) {
+			try {			
+				RMIServerI server1 = new RMIServer();
+				RMIServerI stub = (RMIServer) UnicastRemoteObject.exportObject(server1, 0);
+				Registry registry = LocateRegistry.createRegistry(1099);
+				registry.rebind("RMIServer", stub);
+			}
+			catch ( RemoteException er) {
+				System.out.println("Error initializing registry or binding server.");
+				System.exit(-1);
+			}	
+		}
+		
 
 		// TO-DO:
 		// Start / find the registry (hint use LocateRegistry.createRegistry(...)
