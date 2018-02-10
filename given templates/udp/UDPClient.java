@@ -37,22 +37,30 @@ public class UDPClient {
 		recvPort = Integer.parseInt(args[1]);
 		countTo = Integer.parseInt(args[2]);
 		
-		UDPClient uclient = new UPDClient();
-		client.testLoop(serverAddr, recvPort, countTo);		
-		sendSoc.close();
+		UDPClient udp = new UDPClient();
+		udp.testLoop(serverAddr, recvPort, countTo);		
 
 		
 		// TO-DO: Construct UDP client class and try to send messages
 	}
 
 	public UDPClient() {
-		DatagramSocket sendSoc = null;
-	}
+		try {
+			sendSoc = new DatagramSocket();
+		} catch (SocketException e) {
+			System.out.println("Error creating socket for sending data.");
+		}
+}
 
 	private void testLoop(InetAddress serverAddr, int recvPort, int countTo) {
 		for ( int tries = 0; tries < countTo; tries++){
-			testmsg = new MessageInfo(countTo + ";" + tries);
-			send(testmsg.toString(), serverAddr, recvPort);
+			try {
+				MessageInfo testmsg = new MessageInfo(countTo + ";" + tries);
+				send(testmsg.toString(), serverAddr, recvPort);
+			}
+			catch ( Exception e ){
+				System.out.println("Error creating/sending message");
+			}
 		}				
 
 		// TO-DO: Send the messages to the server
@@ -62,10 +70,14 @@ public class UDPClient {
 		int				payloadSize;
 		byte[]				pktData;
 
-		byte[] pktData = payload.getBytes();
+		pktData = payload.getBytes();
 		DatagramPacket	pkt = new DatagramPacket(pktData, pktData.length, destAddr, destPort);
-
-		sendSoc.send(pkt);
+		try {
+			sendSoc.send(pkt);
+		}
+		catch (IOException e){
+			System.out.println("Error passing to socket");
+		}
 		// TO-DO: build the datagram packet and send it to the server 
 	}
 }
