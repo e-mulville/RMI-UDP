@@ -26,21 +26,23 @@ public class UDPServer {
 		byte[]			pacData;
 		byte[] buf = new byte[256];
 		DatagramPacket 	pac =  new DatagramPacket(buf, buf.length);
-		try {		
-			recvSoc.setSoTimeout(30000);
-			recvSoc.receive(pac);
-		}
-		catch (IOException e) {
-		
-		}
-		catch( Exception e) {
-		}
-	        pacData = pac.getData();
-		String data = pacData.toString(); 
-		processMessage(data);
-		
 		
 
+		while(!close) {
+			try {		
+				recvSoc.setSoTimeout(30000);
+				recvSoc.receive(pac);
+			}
+			catch (IOException e) {
+	
+			}
+			catch( Exception e) {
+			}
+			pacData = pac.getData();
+			String data = pacData.toString(); 
+			processMessage(data);
+		}
+		
 		// TO-DO: Receive the messages and process them by calling processMessage(...).
 		//        Use a timeout (e.g. 30 secs) to ensure the program doesn't block forever
 
@@ -49,6 +51,7 @@ public class UDPServer {
 	public void processMessage(String data) {
 
 		MessageInfo msg = null;
+		
 		try {
 			msg = new MessageInfo(data);
 		}
@@ -83,6 +86,7 @@ public class UDPServer {
 			for(int i = 0; i < MissingMsgList.size() ; i++){	
 				System.out.println(MissingMsgList.get(i) + ", ");	
 			}
+			close = true;
 		}
 
 
