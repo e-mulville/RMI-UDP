@@ -9,6 +9,7 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 import common.MessageInfo;
 
@@ -18,15 +19,22 @@ public class UDPServer {
 	private int totalMessages = -1;
 	private int[] receivedMessages;
 	private boolean close;
-	public ArrayLst<int> msgList = null;
+	public ArrayList<Integer> msgList;
 
 	private void run() {
 		int				pacSize;
 		byte[]			pacData;
 		byte[] buf = new byte[256];
 		DatagramPacket 	pac =  new DatagramPacket(buf, buf.length);
-		socket.setSoTimeout(30000);
-		socket.recieve(pac);
+		try {		
+			recvSoc.setSoTimeout(30000);
+			recvSoc.receive(pac);
+		}
+		catch (IOException e) {
+		
+		}
+		catch( Exception e) {
+		}
 	        pacData = pac.getData();
 		String data = pacData.toString(); 
 		processMessage(data);
@@ -41,34 +49,39 @@ public class UDPServer {
 	public void processMessage(String data) {
 
 		MessageInfo msg = null;
-		msg = new MessageInfo(data);
-		
-		if (msgList.get(0) = null) {
-			msgList = new ArrayList<int>();
+		try {
+			msg = new MessageInfo(data);
+		}
+		catch (Exception e) {
+			System.out.println("Error making MessageInfo");
+		}
+		if (msgList.isEmpty()) {
+			msgList = new ArrayList<Integer>();
 			msgList.add(msg.messageNum);
 
-                 } else {
+                } 
+		else {
 			msgList.add(msg.messageNum);	
-		 }
+		}
 
-		if (msg.messageNum = msg.totalMessages){
+		if (msg.messageNum == msg.totalMessages){
 			int msgsRecieved = msgList.size();
-			ArrayLst<int> MissingMsgList = new ArrayList<int>(); 
+			ArrayList<Integer> MissingMsgList = new ArrayList<Integer>(); 
 			for(int i = 0; i <= msg.totalMessages; i++){
-			   boolean found = false; 	
-			   for( int j = 0; j <= msgList.size(); j++){
-				if(msgList.get(j) == i){
-				  found = true;
+				boolean found = false; 	
+				for( int j = 0; j <= msgList.size(); j++){
+					if(msgList.get(j) == i){
+						found = true;
+					}
 				}
-			   }
-			  if(found =! true){
-				MissingMsgList.add(i);
-			  }	
+				if(found =! true){
+					MissingMsgList.add(i);
+				}	
 			}
-		   system.out.println("Total number of messages recieved: " + msgsRecieved);
-		   system.out.println("The messages lost are: ");
-		   for(int i = 0; i < MissingMsgList.size() ; i++){	
-		      system.out.println(MissingMsgList.get(i) + ", ");	
+			System.out.println("Total number of messages recieved: " + msgsRecieved);
+			System.out.println("The messages lost are: ");
+			for(int i = 0; i < MissingMsgList.size() ; i++){	
+				System.out.println(MissingMsgList.get(i) + ", ");	
 			}
 		}
 
@@ -89,8 +102,12 @@ public class UDPServer {
 
 	public UDPServer(int rp) {
 		// TO-DO: Initialise UDP socket for receiving data
-		DatagramSocket recvSoc = null; 
-
+		try {
+			DatagramSocket recvSoc = new DatagramSocket(rp); 
+		}
+		catch (SocketException e){
+			System.out.println("Error initlaising socket on recieve port");
+		}
 
 		// Done Initialisation
 		System.out.println("UDPServer ready");
@@ -105,7 +122,9 @@ public class UDPServer {
 			System.exit(-1);
 		}
 		recvPort = Integer.parseInt(args[0]);
-		run();
+
+		UDPServer udp = new UDPServer(recvPort);
+		udp.run();
 
 		// TO-DO: Construct Server object and start it by calling run().
 	}
