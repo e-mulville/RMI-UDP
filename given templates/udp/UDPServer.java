@@ -15,31 +15,41 @@ import common.MessageInfo;
 
 public class UDPServer {
 
-	private DatagramSocket recvSoc;
+	public DatagramSocket recvSoc;
+	private int totalMessages = -1;
 	private int[] receivedMessages;
-	private boolean close;
+	private boolean close = false;
+	public MessageInfo msg = null;
 	public ArrayList<Integer> msgList;
 
 	private void run() {
-		int				pacSize;
+		int			pacSize;
 		byte[]			pacData;
 		byte[] buf = new byte[5000];
 		DatagramPacket 	pac =  new DatagramPacket(buf, buf.length);
+		String data = null;
 		
 
 		while(!close) {
-			try {		
+			try {	
 				recvSoc.setSoTimeout(30000);
 				recvSoc.receive(pac);
+				pacData = pac.getData();
+				data = new String(pacData); 
+
 			}
-			catch (IOException e) {
-	
+			catch( SocketException e) {
+				System.out.println( e + "SocketExcepction");
 			}
+
 			catch( Exception e) {
+				System.out.println( e + "Excepction in run");
 			}
-			pacData = pac.getData();
-			String data = pacData.toString(); 
+			
+
 			processMessage(data);
+
+			
 		}
 		
 		// TO-DO: Receive the messages and process them by calling processMessage(...).
@@ -49,15 +59,16 @@ public class UDPServer {
 
 	public void processMessage(String data) {
 
-		MessageInfo msg = null;
 		
+		System.out.println(data);
 		try {
 			msg = new MessageInfo(data);
+		
 		}
 		catch (Exception e) {
 			System.out.println("Error making MessageInfo");
 		}
-		if (msgList.isEmpty()) {
+		if (msgList == null) {
 			msgList = new ArrayList<Integer>();
 			msgList.add(msg.messageNum);
 
@@ -71,7 +82,7 @@ public class UDPServer {
 			ArrayList<Integer> MissingMsgList = new ArrayList<Integer>(); 
 			for(int i = 0; i <= msg.totalMessages; i++){
 				boolean found = false; 	
-				for( int j = 0; j <= msgList.size(); j++){
+				for( int j = 0; j <= msgList.size() - 1; j++){
 					if(msgList.get(j) == i){
 						found = true;
 					}
@@ -106,10 +117,14 @@ public class UDPServer {
 	public UDPServer(int rp) {
 		// TO-DO: Initialise UDP socket for receiving data
 		try {
-			DatagramSocket recvSoc = new DatagramSocket(rp); 
+			recvSoc = new DatagramSocket(rp); 
+
 		}
 		catch (SocketException e){
 			System.out.println("Error initlaising socket on recieve port");
+		}
+		catch(Exception e) {
+			System.out.println("aie");
 		}
 
 		// Done Initialisation
@@ -125,6 +140,8 @@ public class UDPServer {
 			System.exit(-1);
 		}
 		recvPort = Integer.parseInt(args[0]);
+
+		System.out.println(recvPort);
 
 		UDPServer udp = new UDPServer(recvPort);
 		udp.run();
