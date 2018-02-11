@@ -30,7 +30,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 		receivedMessages[msg.messageNum] = 1;	
 		
-		if(msg.messageNum + 1 == totalMessages}{   // Why the +1?
+		if(msg.messageNum + 1 == totalMessages){   // Why the +1?
 			
 			int n = 0;
 			String lost = "The messages lost are: ";			
@@ -45,7 +45,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		}
 		System.out.println("Total number of messages recieved: " + (totalMessages - n));
 		System.out.println(lost);
-		system.exit(0);
+		System.exit(0);
 		} 
 
 		// TO-DO: On receipt of first message, initialise the receive buffer
@@ -96,18 +96,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		}
 
 		
-		try {
-			LocateRegistry.createRegistry( 1099 );
-			Naming.rebind("RMIServer", new RMIServer());
-		} 
-			catch (RemoteException e) {
-			System.out.println("Error initializing registry or binding server.");
-			System.exit(-1);
-		}
-			catch (MalformedURLException e) {
-			System.out.println("Could not bind server to defined registry as the URL was malformed.");
-			System.exit(-1);
-}		
+	
 		// TO-DO:
 		// Start / find the registry (hint use LocateRegistry.createRegistry(...)
 		// If we *know* the registry is running we could skip this (eg run rmiregistry in the start script)
