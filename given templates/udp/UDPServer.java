@@ -16,7 +16,6 @@ import common.MessageInfo;
 public class UDPServer {
 
 	public DatagramSocket recvSoc;
-	private int totalMessages = -1;
 	private int[] receivedMessages;
 	private boolean close = false;
 	public MessageInfo msg = null;
@@ -58,11 +57,21 @@ public class UDPServer {
 	}
 
 	public void processMessage(String data) {
-
 		
-		System.out.println(data);
+		String data2 = data.replaceAll("\\s","");
+		int messageNum = 9999;
+		int totalMes = 9999;
+		String[] fields = null;
+		System.out.println(data2);
+		fields = data2.split("\\D");
+		totalMes = Integer.parseInt(fields[0]);
+		messageNum = Integer.parseInt(fields[1]);
+		
+		System.out.println(totalMes);
+		System.out.println(messageNum);
+
 		try {
-			msg = new MessageInfo(data);
+			msg = new MessageInfo("20;0");
 		
 		}
 		catch (Exception e) {
@@ -70,17 +79,17 @@ public class UDPServer {
 		}
 		if (msgList == null) {
 			msgList = new ArrayList<Integer>();
-			msgList.add(msg.messageNum);
+			msgList.add(messageNum);
 
                 } 
 		else {
-			msgList.add(msg.messageNum);	
+			msgList.add(messageNum);	
 		}
 
-		if (msg.messageNum == msg.totalMessages){
+		if (messageNum + 1 == totalMes){
 			int msgsRecieved = msgList.size();
 			ArrayList<Integer> MissingMsgList = new ArrayList<Integer>(); 
-			for(int i = 0; i <= msg.totalMessages; i++){
+			for(int i = 0; i <= totalMes; i++){
 				boolean found = false; 	
 				for( int j = 0; j <= msgList.size() - 1; j++){
 					if(msgList.get(j) == i){
