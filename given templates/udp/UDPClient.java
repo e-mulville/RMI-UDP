@@ -58,6 +58,7 @@ public class UDPClient {
 				MessageInfo testmsg = new MessageInfo(countTo + ";" + tries);
 				send(testmsg.toString(), serverAddr, recvPort);
 			}
+
 			catch ( Exception e ){
 				System.out.println("Error creating/sending message");
 			}
@@ -74,6 +75,7 @@ public class UDPClient {
 		DatagramPacket	pkt = new DatagramPacket(pktData, pktData.length, destAddr, destPort);
 		try {
 			sendSoc.send(pkt);
+			System.out.println(pkt);
 		}
 		catch (IOException e){
 			System.out.println("Error passing to socket");

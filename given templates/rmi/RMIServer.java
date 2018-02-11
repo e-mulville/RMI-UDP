@@ -17,8 +17,7 @@ import common.*;
 
 public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
-	private int totalMessages = -1;
-	private int[] receivedMessages;
+	private int[] receivedMessages; 
 
 	public RMIServer() throws RemoteException {
 	}
@@ -27,16 +26,16 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 		if (receivedMessages == null) {
 			receivedMessages = new int[msg.totalMessages];
-			System.out.println("First message.");
+			System.out.println("First message."); //Indicate its recieving
 		}
 
 		receivedMessages[msg.messageNum] = 1;	
 		
-		if(msg.messageNum + 1 == totalMessages){   // Why the +1?
+		if(msg.messageNum + 1 == msg.totalMessages){
 			
 			int n = 0;
-			String lost = "The messages lost are: ";			
-			for( int i = 0; i < totalMessages; i++){
+			String lost = "The messages not recieved are: ";			
+			for( int i = 0; i < msg.totalMessages; i++){
 				if(receivedMessages[i] != 1){
 					n++;
 					lost = lost + " " + (i + 1) + ", ";
@@ -45,7 +44,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		if(n == 0){
 			lost = lost + "None";
 		}
-		System.out.println("Total number of messages recieved: " + (totalMessages - n));
+		System.out.println("Total number of messages recieved: " + (msg.totalMessages - n));
 		System.out.println(lost);
 		System.exit(0);
 		} 
@@ -91,14 +90,11 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		try {
 			LocateRegistry.createRegistry( 1099 );
 			Naming.rebind("RMIServer", new RMIServer());
-		} catch (RemoteException e) {
-			System.out.println("Error initializing registry or binding server.");
-			System.exit(-1);
-		} catch (MalformedURLException e) {
-			System.out.println("Could not bind server to defined registry as the URL was malformed.");
+		} catch (Exception e) {
+			System.out.println("Error rebinding server.");
 			System.exit(-1);
 		}
-		System.out.println("Set up server.");
+		System.out.println("Server is set up.");
 		
 	
 		// TO-DO:
