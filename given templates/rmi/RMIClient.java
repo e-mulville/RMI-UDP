@@ -29,6 +29,21 @@ public class RMIClient {
 			System.setSecurityManager(new RMISecurityManager());
 		}
 
+		try {
+			 iRMIServer = (RMIServerI) Naming.lookup(urlServer);
+			 // Attempt to send messages the specified number of times
+			 for(int i = 0; i < numMessages; i++) {
+				MessageInfo msg = new MessageInfo(numMessages,i);
+				iRMIServer.receiveMessage(msg);
+			}
+		} catch (MalformedURLException e) {
+			System.out.println("Errpr: Malformed hostname.");
+		} catch (RemoteException e) {
+			System.out.println("Error: Remote Exception.");
+		} catch (NotBoundException e) {
+			System.out.println("Error: Not Bound Exception.");
+		}
+
 		// TO-DO: Initialise Security Manager
 
 		// TO-DO: Bind to RMIServer

@@ -9,6 +9,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
+import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.registry.Registry;
 
@@ -26,6 +27,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 		if (receivedMessages == null) {
 			receivedMessages = new int[msg.totalMessages];
+			System.out.println("First message.");
 		}
 
 		receivedMessages[msg.messageNum] = 1;	
@@ -62,9 +64,19 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 		RMIServer rmis = null;
 
+
 		if(System.getSecurityManager()==null){
            		 System.setSecurityManager(new RMISecurityManager());
 		}
+		
+		try {
+			rmis = new RMIServer();
+		}
+		catch (RemoteException e){
+			System.out.println("Error making server");
+		}
+			
+		rmis.rebindServer(rmis);
 
 		// TO-DO: Initialise Security Manager
 
@@ -74,27 +86,19 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 	}
 
-	protected static void rebindServer(String serverURL, RMIServer server) {
+	protected static void rebindServer(RMIServer server) {
 		
 		try {
-			RMIServerI server1 = new RMIServer();
-			RMIServerI stub = (RMIServer) UnicastRemoteObject.exportObject(server1, 0);
-			Registry registry = LocateRegistry.getRegistry();
-			registry.rebind("RMIServer", stub);
+			LocateRegistry.createRegistry( 1099 );
+			Naming.rebind("RMIServer", new RMIServer());
+		} catch (RemoteException e) {
+			System.out.println("Error initializing registry or binding server.");
+			System.exit(-1);
+		} catch (MalformedURLException e) {
+			System.out.println("Could not bind server to defined registry as the URL was malformed.");
+			System.exit(-1);
 		}
-		catch ( RemoteException e) {
-			try {			
-				RMIServerI server1 = new RMIServer();
-				RMIServerI stub = (RMIServer) UnicastRemoteObject.exportObject(server1, 0);
-				Registry registry = LocateRegistry.createRegistry(1099);
-				registry.rebind("RMIServer", stub);
-			}
-			catch ( RemoteException er) {
-				System.out.println("Error initializing registry or binding server.");
-				System.exit(-1);
-			}	
-		}
-
+		System.out.println("Set up server.");
 		
 	
 		// TO-DO:
