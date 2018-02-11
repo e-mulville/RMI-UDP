@@ -16,7 +16,6 @@ import common.MessageInfo;
 public class UDPServer {
 
 	private DatagramSocket recvSoc;
-	private int totalMessages = -1;
 	private int[] receivedMessages;
 	private boolean close;
 	public ArrayList<Integer> msgList;
@@ -24,7 +23,7 @@ public class UDPServer {
 	private void run() {
 		int				pacSize;
 		byte[]			pacData;
-		byte[] buf = new byte[256];
+		byte[] buf = new byte[5000];
 		DatagramPacket 	pac =  new DatagramPacket(buf, buf.length);
 		
 
