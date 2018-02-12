@@ -18,8 +18,9 @@ public class UDPServer {
 	public DatagramSocket recvSoc;
 	private int[] receivedMessages;
 	private boolean close = false;
-	public MessageInfo msg = null;
-	public ArrayList<Integer> msgList;
+	public ArrayList<Integer> msgList = new ArrayList<Integer>();
+	public 	int totalMessages = 9999;
+	public 	int MessagesRecieved = 9999;
 
 	private void run() {
 		int			pacSize;
@@ -40,11 +41,31 @@ public class UDPServer {
 			catch( SocketException e) {
 				System.out.println( e + "SocketExcepction");
 			}
-
 			catch( Exception e) {
-				System.out.println( e + "Excepction in run");
+				System.out.println("Messages Lost = " + (totalMessages - MessagesRecieved));
+				ArrayList<Integer> MissingMsgList = new ArrayList<Integer>(); 
+				boolean found = false;
+				for(int i = 0; i <= totalMessages; i++){
+					
+					found = false;
+				
+
+					for( int j = 0; j <= msgList.size() - 1; j++){
+						if(msgList.get(j) == i){
+							found = true;
+						}
+					}
+					if(found != true){
+						MissingMsgList.add(i);
+					}	
+				}
+				System.out.println("Total number of messages recieved: " + MessagesRecieved);
+				System.out.println("The messages lost are: ");
+				for(int i = 0; i < MissingMsgList.size() ; i++){	
+					System.out.println("Lost message number : " + MissingMsgList.get(i));	
+				}
+				close = true;
 			}
-			
 
 			processMessage(data);
 
@@ -60,52 +81,45 @@ public class UDPServer {
 		
 		String data2 = data.replaceAll("\\s","");
 		int messageNum = 9999;
-		int totalMes = 9999;
 		String[] fields = null;
-		System.out.println(data2);
 		fields = data2.split("\\D");
-		totalMes = Integer.parseInt(fields[0]);
+		totalMessages = Integer.parseInt(fields[0]);
 		messageNum = Integer.parseInt(fields[1]);
-		
-		System.out.println(totalMes);
-		System.out.println(messageNum);
 
-		try {
-			msg = new MessageInfo("20;0");
-		
-		}
-		catch (Exception e) {
-			System.out.println("Error making MessageInfo");
-		}
 		if (msgList == null) {
-			msgList = new ArrayList<Integer>();
+			//msgList = new ArrayList<Integer>();
 			msgList.add(messageNum);
 
                 } 
 		else {
 			msgList.add(messageNum);	
 		}
+		MessagesRecieved = msgList.size();
 
-		if (messageNum + 1 == totalMes){
-			int msgsRecieved = msgList.size();
-			ArrayList<Integer> MissingMsgList = new ArrayList<Integer>(); 
-			for(int i = 0; i <= totalMes; i++){
-				boolean found = false; 	
-				for( int j = 0; j <= msgList.size() - 1; j++){
-					if(msgList.get(j) == i){
-						found = true;
+		if ((messageNum + 1 == totalMessages) ){
+				System.out.println("Messages Lost = " + (totalMessages - MessagesRecieved));
+				ArrayList<Integer> MissingMsgList = new ArrayList<Integer>(); 
+				boolean found = false;
+				for(int i = 0; i <= totalMessages; i++){
+					
+					found = false;
+				
+
+					for( int j = 0; j <= msgList.size() - 1; j++){
+						if(msgList.get(j) == i){
+							found = true;
+						}
 					}
+					if(found != true){
+						MissingMsgList.add(i);
+					}	
 				}
-				if(found =! true){
-					MissingMsgList.add(i);
-				}	
-			}
-			System.out.println("Total number of messages recieved: " + msgsRecieved);
-			System.out.println("The messages lost are: ");
-			for(int i = 0; i < MissingMsgList.size() ; i++){	
-				System.out.println(MissingMsgList.get(i) + ", ");	
-			}
-			close = true;
+				System.out.println("Total number of messages recieved: " + MessagesRecieved);
+				System.out.println("The messages lost are: ");
+				for(int i = 0; i < MissingMsgList.size() ; i++){	
+					System.out.println("Lost message number : " + MissingMsgList.get(i));	
+				}
+				close = true;
 		}
 
 
@@ -154,6 +168,8 @@ public class UDPServer {
 
 		UDPServer udp = new UDPServer(recvPort);
 		udp.run();
+
+			
 
 		// TO-DO: Construct Server object and start it by calling run().
 	}

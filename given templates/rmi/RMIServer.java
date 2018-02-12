@@ -26,7 +26,6 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 		if (receivedMessages == null) {
 			receivedMessages = new int[msg.totalMessages];
-			System.out.println("First message."); //Indicate its recieving
 		}
 
 		receivedMessages[msg.messageNum] = 1;	
@@ -36,17 +35,18 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 			int n = 0;
 			String lost = "The messages not recieved are: ";			
 			for( int i = 0; i < msg.totalMessages; i++){
+
 				if(receivedMessages[i] != 1){
 					n++;
 					lost = lost + " " + (i + 1) + ", ";
 				} 
 			}
-		if(n == 0){
-			lost = lost + "None";
-		}
-		System.out.println("Total number of messages recieved: " + (msg.totalMessages - n));
-		System.out.println(lost);
-		System.exit(0);
+			if(n == 0){
+				lost = lost + "None";
+			}
+			System.out.println("Total number of messages recieved: " + (msg.totalMessages - n));
+			System.out.println(lost);
+			System.exit(0);
 		} 
 
 		// TO-DO: On receipt of first message, initialise the receive buffer
