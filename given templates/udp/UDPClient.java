@@ -22,7 +22,6 @@ public class UDPClient {
 		int 		countTo;
 		String 		message;
 
-		// Get the parameters
 		if (args.length < 3) {
 			System.err.println("Arguments required: server name/IP, recv port, message count");
 			System.exit(-1);
@@ -40,8 +39,6 @@ public class UDPClient {
 		UDPClient udp = new UDPClient();
 		udp.testLoop(serverAddr, recvPort, countTo);		
 
-		
-		// TO-DO: Construct UDP client class and try to send messages
 	}
 
 	public UDPClient() {
@@ -63,8 +60,6 @@ public class UDPClient {
 				System.out.println("Error creating/sending message");
 			}
 		}				
-
-		// TO-DO: Send the messages to the server
 	}
 
 	private void send(String payload, InetAddress destAddr, int destPort) {
@@ -75,11 +70,9 @@ public class UDPClient {
 		DatagramPacket	pkt = new DatagramPacket(pktData, pktData.length, destAddr, destPort);
 		try {
 			sendSoc.send(pkt);
-			System.out.println(pkt);
 		}
 		catch (IOException e){
 			System.out.println("Error passing to socket");
 		}
-		// TO-DO: build the datagram packet and send it to the server 
 	}
 }

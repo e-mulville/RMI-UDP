@@ -17,7 +17,6 @@ public class RMIClient {
 
 		RMIServerI iRMIServer = null;
 
-		// Check arguments for Server host and number of messages
 		if (args.length < 2){
 			System.out.println("Needs 2 arguments: ServerHostName/IPAddress, TotalMessageCount");
 			System.exit(-1);
@@ -43,12 +42,5 @@ public class RMIClient {
 		} catch (NotBoundException e) {
 			System.out.println("Error: Not Bound Exception.");
 		}
-
-		// TO-DO: Initialise Security Manager
-
-		// TO-DO: Bind to RMIServer
-
-		// TO-DO: Attempt to send messages the specified number of times
-
 	}
 }
